@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chloe | 解方架構&流程重組 • 溫柔兼具強大的催化者</title>
+  <!-- Google Fonts: 引入三種熱門可愛/簡約字體供隨時切換 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Quicksand:wght@500;600;700&family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            maru: ['"Quicksand"', '"Zen Maru Gothic"', '"Noto Sans TC"', 'sans-serif'],
+            mplus: ['"Quicksand"', '"M PLUS Rounded 1c"', '"Noto Sans TC"', 'sans-serif'],
+            noto: ['"Quicksand"', '"Noto Sans TC"', 'sans-serif'],
+          },
+          colors: {
+            // 灰黑系列 (Charcoal / Ink)
+            ink: {
+              300: '#a19c94',
+              400: '#837e76',
+              500: '#615d56',
+              700: '#423f3a',
+              900: '#2c2a27',
+            },
+            // 米色 / 大地奶油系列 (Warm Cream / Beige)
+            cream: {
+              50: '#fbf9f5',
+              100: '#f5f1e8',
+              200: '#e9e3d6',
+              300: '#ddd4c3',
+              400: '#c5b8a0',
+            },
+            // 灰綠系列 (Muted Sage Green)
+            sage: {
+              50: '#f4f6f4',
+              100: '#e5ebe5',
+              200: '#cbd7cb',
+              300: '#acc2ad',
+              500: '#6b7f6e',
+              600: '#586b5b',
+              700: '#455347',
+            },
+            // 低飽和灰紅 / 柔和蘋果磚紅 (Dusty Muted Red)
+            dustyRed: {
+              50: '#faf2f2',
+              100: '#f3e3e3',
+              200: '#e4c8c8',
+              300: '#d1a6a6',
+              500: '#b36464',
+              600: '#9d5252',
+              700: '#824141',
+            },
+            // 暖沙色 (Soft Sand)
+            sand: {
+              50: '#f9f7f4',
+              100: '#f1ece3',
+              200: '#ded4c4',
+              500: '#8e7a65',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #fbf9f5;
+      color: #2c2a27;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      letter-spacing: 0.025em;
+      scroll-behavior: smooth;
+    }
+    body, button, input, h1, h2, h3, h4, p, span {
+      font-family: inherit;
+    }
+    .font-maru {
+      font-family: 'Quicksand', 'Zen Maru Gothic', 'Noto Sans TC', sans-serif !important;
+    }
+    .font-mplus {
+      font-family: 'Quicksand', 'M PLUS Rounded 1c', 'Noto Sans TC', sans-serif !important;
+    }
+    .font-noto {
+      font-family: 'Quicksand', 'Noto Sans TC', sans-serif !important;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(233, 227, 214, 0.85);
+    }
+    /* 舒適滾動軸 */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f5f1e8;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ddd4c3;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #c5b8a0;
+    }
+  </style>
+</head>
+<body class="selection:bg-dustyRed-100 selection:text-dustyRed-700">
+  <div id="app" class="min-h-screen flex flex-col font-maru">
+    
+    <!-- 頂部導航 (白 + 米色 + 灰黑) -->
+    <header class="sticky top-0 z-40 glass-card border-b border-cream-200/70 px-6 py-3.5">
+      <div class="max-w-6xl mx-auto flex items-center justify-between">
+        <a href="#" class="flex items-center gap-3 group">
+          <!-- 第一張圖片需求：GOAL 01 風格的圓角蘋果圖示 -->
+          <div class="w-10 h-10 rounded-2xl bg-dustyRed-50 border border-dustyRed-100/80 flex items-center justify-center text-dustyRed-500 shadow-sm group-hover:scale-105 group-hover:border-dustyRed-200 transition-all duration-300">
+            <i data-lucide="apple" class="w-5 h-5 stroke-[1.8]"></i>
+          </div>
+          <div>
+            <div class="font-semibold text-lg tracking-wide text-ink-900 group-hover:text-dustyRed-600 transition-colors flex items-center gap-1.5">
+              <span>Chloe</span>
+            </div>
+            <div class="text-xs text-ink-500 font-normal">解方架構&流程重組</div>
+          </div>
+        </a>
+
+        <!-- 導航連結 -->
+        <nav class="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-normal text-ink-700">
+          <a href="#philosophy" class="hover:text-dustyRed-600 transition-colors">自我期許</a>
+          <a href="#journey" class="hover:text-dustyRed-600 transition-colors">背景與實務足跡</a>
+          <a href="#projects" class="hover:text-dustyRed-600 transition-colors">解方代表作</a>
+          <a href="#thinking" class="hover:text-dustyRed-600 transition-colors">拆解思維</a>
+          <a href="#connect" class="hover:text-dustyRed-600 transition-colors">交流與共創</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 主區塊 HERO SECTION -->
+    <main class="flex-grow">
+      <section class="relative pt-12 pb-20 md:pt-16 md:pb-28 overflow-hidden">
+        <!-- 柔和低飽和背景光暈 -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[380px] bg-gradient-to-br from-cream-100/70 via-sage-50/40 to-transparent blur-3xl pointer-events-none -z-10 rounded-full"></div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center">
+          <!-- 可愛形象大頭貼 (第二張圖片需求：已移除右下角小蘋果) -->
+          <div class="inline-flex flex-col items-center mb-6 group cursor-pointer">
+            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1.5 bg-white border border-cream-200 shadow-sm group-hover:scale-105 transition-all duration-300">
+              <img src="./avatar.png" alt="Chloe" class="w-full h-full object-cover rounded-full bg-cream-50">
+            </div>
+          </div>
+
+          <!-- 第二張圖片需求：徽章中不出現 🍎 emoji -->
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-cream-200 text-ink-700 text-xs font-medium mb-6 shadow-sm">
+            <span>當顆散發乙烯氣體的蘋果</span>
+          </div>
+
+          <!-- 舒適大標題 (兼具日系可愛與字體統一) -->
+          <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-[40px] font-semibold text-ink-900 leading-relaxed md:leading-[1.7] tracking-wider mb-8">
+            在複雜混亂的流程裡，<br class="hidden sm:inline" />
+            催化出<span class="text-dustyRed-500 font-semibold">清晰、温暖</span>且<span class="text-sage-500 font-semibold">立即可用</span>的解方。
+          </h1>
+
+          <!-- 使用者最新自介微調文案 (精準控制為兩排，蘋果不落單到第三排) -->
+          <p class="max-w-3xl mx-auto text-sm sm:text-base md:text-[17px] text-ink-500 leading-relaxed md:leading-[1.85] mb-10 text-center">
+            嗨！我是 Chloe，身為行動力高與正能量滿滿的射手座，喜歡拆解流程、方法研究與重組架構，<br class="hidden sm:inline" />
+            不僅是解決問題，更是一步一步認識、喜歡自己，<span class="inline-block">希望這份能量也能傳遞給你🍎</span>
+          </p>
+
+          <!-- 專長標籤 (緊湊協調排版，間距適中不鬆散，單排整齊呈現) -->
+          <div class="flex flex-wrap justify-center items-center gap-x-2 sm:gap-x-2.5 gap-y-2 max-w-5xl mx-auto mb-12 text-xs sm:text-[13px] text-ink-500 font-medium py-1">
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#流程拆解</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#解方架構</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#團隊乙烯催化劑</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#把複雜變簡單</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#輕量化系統開發</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#協作工具</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#共創發展</span>
+            <span class="text-cream-300 select-none text-[9px] opacity-70">·</span>
+            <span class="hover:text-dustyRed-600 transition-colors cursor-default whitespace-nowrap">#跨領域重組思維</span>
+          </div>
+
+          <!-- 快捷行動鈕 -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            <a href="#projects" class="w-full sm:w-auto px-7 py-3 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow transition-all flex items-center justify-center gap-2 group">
+              <span>探索我的解方成果</span>
+              <i data-lucide="arrow-down" class="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform"></i>
+            </a>
+            <a href="#philosophy" class="w-full sm:w-auto px-7 py-3 rounded-full bg-white hover:bg-cream-100 text-ink-700 border border-cream-200 font-medium text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow-sm">
+              <span>了解我的兩大期許</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 核心哲學區塊 PHILOSOPHY (柔和米色背景) -->
+      <section id="philosophy" class="py-20 bg-cream-100/60 border-y border-cream-200/70">
+        <div class="max-w-5xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <div class="text-xs uppercase tracking-widest text-ink-400 font-semibold mb-2">My North Star</div>
+            <h2 class="text-2xl md:text-3xl font-semibold text-ink-900">
+              給自己的兩個純粹目標
+            </h2>
+            <!-- 兩行對稱平衡斷行 (23字 vs 21字，左右視覺完全對稱) -->
+            <p class="text-sm md:text-base text-ink-500 mt-3 max-w-xl mx-auto leading-relaxed md:leading-[1.85] text-center">
+              把正能量、拆解問題的清晰思維與好方法散播出去，<br class="hidden sm:inline" />
+              讓共事的人因為我的存在而感到安心、一同成長。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8">
+            <!-- 目標 1: 溫柔兼具強大 (灰綠系點綴) -->
+            <div class="glass-card rounded-3xl p-8 sm:p-10 relative overflow-hidden group hover:border-sage-200 transition-all duration-300">
+              <div class="w-12 h-12 rounded-2xl bg-sage-50 border border-sage-100 flex items-center justify-center text-sage-600 mb-6 group-hover:scale-105 transition-transform">
+                <i data-lucide="feather" class="w-6 h-6"></i>
+              </div>
+              <div class="text-xs font-semibold text-sage-600 tracking-wider uppercase mb-1">GOAL 01</div>
+              <h3 class="text-lg font-semibold text-ink-900 mb-4">
+                成為「溫柔兼具強大」的人
+              </h3>
+              <p class="text-sm text-ink-600 leading-relaxed font-normal bg-sage-50/60 p-5 rounded-2xl border border-sage-100/70">
+                期許自己既有足夠的溫柔，去傾聽、去同理；同時擁有足夠強大的架構力，把難題一一拆解，提供堅實又可靠的解答。
+              </p>
+            </div>
+
+            <!-- 目標 2: 乙烯氣體的蘋果 (低飽和灰紅點綴) -->
+            <div class="glass-card rounded-3xl p-8 sm:p-10 relative overflow-hidden group hover:border-dustyRed-200 transition-all duration-300">
+              <div class="w-12 h-12 rounded-2xl bg-dustyRed-50 border border-dustyRed-100 flex items-center justify-center text-dustyRed-500 mb-6 group-hover:scale-105 transition-transform">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+              </div>
+              <div class="text-xs font-semibold text-dustyRed-500 tracking-wider uppercase mb-1">GOAL 02</div>
+              <h3 class="text-lg font-semibold text-ink-900 mb-4">
+                當一顆「散發乙烯氣體的蘋果」
+              </h3>
+              <p class="text-sm text-ink-600 leading-relaxed font-normal bg-dustyRed-50/60 p-5 rounded-2xl border border-dustyRed-100/70">
+                蘋果成熟時，會默默散發出微量的乙烯氣體，悄悄催熟、喚醒身邊所有的水果。它不用大聲宣揚自己的甜美，卻能讓整個果籃都充滿香氣與生機。
+              </p>
+            </div>
+          </div>
+
+          <!-- 背景與實務足跡 (Background & Journey) -->
+          <div id="journey" class="mt-16 pt-12 border-t border-cream-200/70 scroll-mt-24">
+            <div class="text-center mb-10">
+              <div class="text-xs uppercase tracking-widest text-ink-400 font-semibold mb-1.5">Background & Journey</div>
+              <h3 class="text-xl md:text-2xl font-semibold text-ink-900">
+                背景與實務足跡
+              </h3>
+              <p class="text-xs sm:text-sm text-ink-500 mt-2 max-w-xl mx-auto">
+                從醫務管理專業出發，兼具公共衛生治理與醫療管顧實務歷練。
+              </p>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-6">
+              <!-- 01 醫務管理學系 -->
+              <div class="glass-card p-6 rounded-3xl border border-cream-200/90 flex flex-col justify-between group hover:border-cream-300 transition-all shadow-sm">
+                <div>
+                  <div class="w-11 h-11 rounded-2xl bg-sage-50 border border-sage-100 flex items-center justify-center text-sage-600 mb-5 group-hover:scale-105 transition-transform">
+                    <i data-lucide="graduation-cap" class="w-5 h-5 stroke-[1.8]"></i>
+                  </div>
+                  <div class="text-[11px] font-semibold text-sage-600 uppercase tracking-wider mb-1">Education</div>
+                  <h4 class="text-base font-semibold text-ink-900 mb-2">醫務管理學系</h4>
+                  <p class="text-xs text-ink-500 leading-relaxed">
+                    扎根醫療體系運作、醫院經營管理指標與醫療組織流程，扎實理論與洞察能力。
+                  </p>
+                </div>
+              </div>
+
+              <!-- 02 高雄市政府衛生局 -->
+              <div class="glass-card p-6 rounded-3xl border border-cream-200/90 flex flex-col justify-between group hover:border-cream-300 transition-all shadow-sm">
+                <div>
+                  <div class="w-11 h-11 rounded-2xl bg-sand-50 border border-sand-100 flex items-center justify-center text-sand-500 mb-5 group-hover:scale-105 transition-transform">
+                    <i data-lucide="building-2" class="w-5 h-5 stroke-[1.8]"></i>
+                  </div>
+                  <div class="text-[11px] font-semibold text-sand-500 uppercase tracking-wider mb-1">Public Health</div>
+                  <h4 class="text-base font-semibold text-ink-900 mb-2">高雄市政府衛生局</h4>
+                  <p class="text-xs text-ink-500 leading-relaxed">
+                    公衛體系實務歷練，深刻理解第一線繁瑣行政作業、跨部門溝通協調與公部門政策推行。
+                  </p>
+                </div>
+              </div>
+
+              <!-- 03 亞洲灣醫智庫 醫管師 -->
+              <div class="glass-card p-6 rounded-3xl border border-cream-200/90 flex flex-col justify-between group hover:border-cream-300 transition-all shadow-sm">
+                <div>
+                  <div class="w-11 h-11 rounded-2xl bg-dustyRed-50 border border-dustyRed-100 flex items-center justify-center text-dustyRed-500 mb-5 group-hover:scale-105 transition-transform">
+                    <i data-lucide="briefcase" class="w-5 h-5 stroke-[1.8]"></i>
+                  </div>
+                  <div class="text-[11px] font-semibold text-dustyRed-500 uppercase tracking-wider mb-1">Consulting</div>
+                  <h4 class="text-base font-semibold text-ink-900 mb-2">亞洲灣醫智庫 • 醫管師</h4>
+                  <p class="text-xs text-ink-500 leading-relaxed">
+                    參與醫療管理顧問輔導，深入臨床與營運現場，協助專科機構優化組織、加速標準化自動解方。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 核心成果展示 PROJECTS -->
+      <section id="projects" class="py-20 md:py-28">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+            <div>
+              <div class="text-xs uppercase tracking-widest text-dustyRed-500 font-semibold mb-2">Featured Solutions</div>
+              <h2 class="text-2xl md:text-3xl font-semibold text-ink-900">
+                解方代表作展示
+              </h2>
+              <p class="text-sm text-ink-500 mt-2">
+                拆解流程、方法研究與重組架構
+              </p>
+            </div>
+
+            <!-- 標籤分類過濾 (低飽和灰黑與白) -->
+            <div class="flex items-center gap-2 mt-6 md:mt-0 flex-wrap">
+              <button 
+                v-for="cat in categories" 
+                :key="cat.id"
+                @click="selectedCategory = cat.id"
+                :class="selectedCategory === cat.id ? 'bg-ink-900 text-cream-50' : 'bg-white text-ink-500 border border-cream-200 hover:bg-cream-50'"
+                class="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all"
+              >
+                {{ cat.name }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 專案卡片網格 (灰綠 / 灰紅 / 米色) -->
+          <div class="grid md:grid-cols-2 gap-8">
+            <div 
+              v-for="item in filteredProjects" 
+              :key="item.id" 
+              class="glass-card rounded-3xl overflow-hidden border border-cream-200/90 hover:border-cream-300 hover:shadow-lg transition-all duration-300 flex flex-col group"
+            >
+              <!-- 頂部色塊與圖示 -->
+              <div :class="item.bgClass" class="p-6 pb-4 border-b border-cream-200/60 relative">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <!-- GOAL 01 風格圓角圖示 -->
+                    <div class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform" :class="item.iconBoxClass">
+                      <i :data-lucide="item.iconName" class="w-5 h-5 stroke-[1.8]"></i>
+                    </div>
+                    <span class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-ink-700 shadow-sm border border-cream-200/60">
+                      {{ item.categoryLabel }}
+                    </span>
+                  </div>
+                  <span class="text-xs font-normal text-ink-400">{{ item.status }}</span>
+                </div>
+                <h3 class="text-lg font-semibold text-ink-900 mt-4 group-hover:text-dustyRed-600 transition-colors">
+                  {{ item.title }}
+                </h3>
+                <p class="text-xs text-ink-400 mt-1 line-clamp-1">
+                  {{ item.subtitle }}
+                </p>
+              </div>
+
+              <!-- 內容區 -->
+              <div class="p-6 flex-grow flex flex-col justify-between">
+                <div>
+                  <!-- 溫柔與強大雙解讀 (統一 GOAL 01 線條風格) -->
+                  <div class="space-y-3 mb-6">
+                    <div class="flex items-start gap-3 bg-cream-50 p-3 rounded-2xl border border-cream-200/60 text-xs">
+                      <span class="inline-flex items-center gap-1.5 text-dustyRed-600 font-semibold shrink-0 mt-0.5">
+                        <i data-lucide="heart" class="w-3.5 h-3.5 stroke-[2]"></i>
+                        <span>溫柔洞察</span>
+                      </span>
+                      <p class="text-ink-500 leading-relaxed">{{ item.gentleInsight }}</p>
+                    </div>
+                    <div class="flex items-start gap-3 bg-sage-50/60 p-3 rounded-2xl border border-sage-100/70 text-xs">
+                      <span class="inline-flex items-center gap-1.5 text-sage-700 font-semibold shrink-0 mt-0.5">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 stroke-[2]"></i>
+                        <span>強大架構</span>
+                      </span>
+                      <p class="text-ink-500 leading-relaxed">{{ item.solidArchitecture }}</p>
+                    </div>
+                  </div>
+
+                  <!-- 標籤 -->
+                  <div class="flex flex-wrap gap-1.5 mb-6">
+                    <span v-for="tag in item.tags" :key="tag" class="text-[11px] px-2.5 py-1 rounded-lg bg-cream-100/70 text-ink-500 font-normal">
+                      #{{ tag }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- 互動按鈕 (保護隱私，聚焦架構拆解) -->
+                <div class="pt-4 border-t border-cream-200/60 flex items-center justify-between">
+                  <button 
+                    @click="openModal(item)"
+                    class="text-xs font-semibold text-ink-800 hover:text-dustyRed-600 flex items-center gap-1.5 transition-colors"
+                  >
+                    <span>閱讀系統架構與拆解</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
+
+                  <span class="inline-flex items-center gap-1 text-[11px] text-ink-400 font-normal">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sage-500"></i>
+                    <span>已脫敏保護</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 拆解思維筆記 HOW I THINK -->
+      <section id="thinking" class="py-20 bg-cream-100/60 border-t border-cream-200/70">
+        <div class="max-w-5xl mx-auto px-6">
+          <div class="text-center mb-16">
+            <div class="text-xs uppercase tracking-widest text-ink-400 font-semibold mb-2">My Methodology</div>
+            <h2 class="text-2xl md:text-3xl font-semibold text-ink-900">
+              我在做的事：跨產業通用的四步拆解法
+            </h2>
+            <p class="text-sm text-ink-500 mt-2 max-w-xl mx-auto">
+              不論在醫療、管顧、人資或跨界專案中，核心方法始終如一：把混沌解開，讓事情變清爽。
+            </p>
+          </div>
+
+          <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass-card p-6 rounded-3xl relative hover:-translate-y-1 transition-transform">
+              <div class="w-9 h-9 rounded-xl bg-dustyRed-50 text-dustyRed-600 flex items-center justify-center font-semibold text-xs mb-4">01</div>
+              <h4 class="font-semibold text-ink-900 mb-2 text-sm">同理與傾聽</h4>
+              <p class="text-xs text-ink-500 leading-relaxed">
+                了解使用者的習慣、擔憂與日常卡關。
+              </p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl relative hover:-translate-y-1 transition-transform">
+              <div class="w-9 h-9 rounded-xl bg-sand-50 text-sand-500 flex items-center justify-center font-semibold text-xs mb-4">02</div>
+              <h4 class="font-semibold text-ink-900 mb-2 text-sm">庖丁解牛</h4>
+              <p class="text-xs text-ink-500 leading-relaxed">
+                將糾纏在一起的資料、人事、公式與規範拆開成最小顆粒度，找出真實瓶頸。
+              </p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl relative hover:-translate-y-1 transition-transform">
+              <div class="w-9 h-9 rounded-xl bg-sage-50 text-sage-600 flex items-center justify-center font-semibold text-xs mb-4">03</div>
+              <h4 class="font-semibold text-ink-900 mb-2 text-sm">重組與輕量</h4>
+              <p class="text-xs text-ink-500 leading-relaxed">
+                用最乾淨直覺的方式重構介面或流程。
+              </p>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl relative hover:-translate-y-1 transition-transform">
+              <div class="w-9 h-9 rounded-xl bg-cream-200/80 text-ink-700 flex items-center justify-center font-semibold text-xs mb-4">04</div>
+              <h4 class="font-semibold text-ink-900 mb-2 text-sm">催化與賦能</h4>
+              <p class="text-xs text-ink-500 leading-relaxed">
+                寫出夥伴能輕鬆看懂的指南與 SOP，讓整個團隊都能無痛接手、一同成長。
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 交流與共創 CONNECT (不商業化、溫暖真誠) -->
+      <section id="connect" class="py-20 md:py-28">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+          <!-- GOAL 01 風格圓角咖啡圖示 -->
+          <div class="w-12 h-12 rounded-2xl bg-cream-100 border border-cream-200/90 flex items-center justify-center text-ink-700 mx-auto mb-6 shadow-sm">
+            <i data-lucide="coffee" class="w-6 h-6 stroke-[1.8]"></i>
+          </div>
+          
+          <h2 class="text-2xl md:text-3xl font-semibold text-ink-900 mb-4">
+            和我聊聊、交流或純粹認識
+          </h2>
+          <p class="text-sm md:text-base text-ink-500 leading-relaxed mb-8 max-w-2xl mx-auto">
+            我很享受單純沉浸在做好作品的過程裡，如果你也有一個想理順的流程、想驗證的點子，或想聊聊人機協同、方法研究，可以和我聊聊
+          </p>
+
+          <!-- 交流主題卡片 (統一線條圖示風格) -->
+          <div class="grid sm:grid-cols-3 gap-4 mb-10 text-left">
+            <div class="p-5 rounded-2xl bg-white border border-cream-200 text-xs shadow-sm flex flex-col justify-between group hover:border-cream-300 transition-all">
+              <div>
+                <div class="font-semibold text-ink-900 mb-2 flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-dustyRed-50 border border-dustyRed-100 flex items-center justify-center text-dustyRed-500">
+                    <i data-lucide="message-square" class="w-3.5 h-3.5 stroke-[1.8]"></i>
+                  </div>
+                  <span>流程理順小雜談</span>
+                </div>
+                <p class="text-ink-500 leading-relaxed">團隊有卡住的繁瑣日常？不要只用技術找問題，我們一起拿白板拆解看看。</p>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-white border border-cream-200 text-xs shadow-sm flex flex-col justify-between group hover:border-cream-300 transition-all">
+              <div>
+                <div class="font-semibold text-ink-900 mb-2 flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-sand-50 border border-sand-100 flex items-center justify-center text-sand-500">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5 stroke-[1.8]"></i>
+                  </div>
+                  <span>知識轉譯與分享</span>
+                </div>
+                <p class="text-ink-500 leading-relaxed">把生硬技術用白話生活比喻帶給團隊夥伴。</p>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-white border border-cream-200 text-xs shadow-sm flex flex-col justify-between group hover:border-cream-300 transition-all">
+              <div>
+                <div class="font-semibold text-ink-900 mb-2 flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-lg bg-sage-50 border border-sage-100 flex items-center justify-center text-sage-600">
+                    <i data-lucide="smile" class="w-3.5 h-3.5 stroke-[1.8]"></i>
+                  </div>
+                  <span>單純交個朋友</span>
+                </div>
+                <p class="text-ink-500 leading-relaxed">彼此散播一點正能量，聊聊如何在專業路上走得既溫柔又堅定。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 聯絡與社群管道 (Email, FB 工作, IG 日常，統一膠囊樣式與單行呈現) -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-2xl mx-auto">
+            <a href="mailto:chloewh8@gmail.com" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+              <span>chloewh8@gmail.com</span>
+            </a>
+            <a href="https://www.facebook.com/chloewh8" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+              </svg>
+              <span>Facebook（工作相關）</span>
+            </a>
+            <a href="https://www.instagram.com/botoya0822/" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap">
+              <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+              </svg>
+              <span>Instagram（日常的我）</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 頁尾 FOOTER (置中簡約呈現) -->
+    <footer class="glass-card border-t border-cream-200/70 py-8 px-6 text-center text-xs text-ink-400">
+      <div class="max-w-6xl mx-auto flex items-center justify-center">
+        <p class="font-normal text-ink-500 tracking-wide">Designed By Chloe</p>
+      </div>
+    </footer>
+
+    <!-- 專案詳細彈窗 MODAL -->
+    <div 
+      v-if="activeModal" 
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-ink-900/40 backdrop-blur-sm transition-opacity"
+      @click.self="closeModal"
+    >
+      <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl border border-cream-200 flex flex-col">
+        <!-- 彈窗頂部 -->
+        <div class="p-6 border-b border-cream-200 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-md z-10">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm" :class="activeModal.iconBoxClass">
+              <i :data-lucide="activeModal.iconName" class="w-5 h-5 stroke-[1.8]"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-ink-900">{{ activeModal.title }}</h3>
+              <p class="text-xs text-ink-400">{{ activeModal.subtitle }}</p>
+            </div>
+          </div>
+          <button @click="closeModal" class="p-2 rounded-full hover:bg-cream-100 text-ink-500 transition-colors">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- 彈窗內容 -->
+        <div class="p-6 space-y-6 text-sm">
+          <div>
+            <h4 class="font-semibold text-dustyRed-600 text-xs tracking-wider uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+              <span>面臨的痛點背景</span>
+            </h4>
+            <p class="text-ink-500 leading-relaxed bg-cream-50 p-4 rounded-2xl border border-cream-200/70">
+              {{ activeModal.painPoint }}
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-semibold text-sage-600 text-xs tracking-wider uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>解方核心亮點</span>
+            </h4>
+            <ul class="space-y-2">
+              <li v-for="(feat, idx) in activeModal.features" :key="idx" class="flex items-start gap-2.5 text-ink-700">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-sage-500 shrink-0 mt-0.5"></i>
+                <span class="text-xs sm:text-sm leading-relaxed">{{ feat }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-semibold text-sand-500 text-xs tracking-wider uppercase mb-2 flex items-center gap-1.5">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5"></i>
+              <span>跨產業啟發與方法收穫</span>
+            </h4>
+            <p class="text-ink-500 leading-relaxed bg-sand-50 p-4 rounded-2xl border border-sand-100 text-xs sm:text-sm">
+              {{ activeModal.takeaway }}
+            </p>
+          </div>
+
+          <!-- 商業機密與個資脫敏保護提示 -->
+          <div class="bg-cream-100/70 p-4 rounded-2xl border border-cream-200 text-xs flex items-start gap-2.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-sage-600 shrink-0 mt-0.5"></i>
+            <div class="text-ink-600 leading-relaxed">
+              <span class="font-semibold text-ink-800">商業機密與隱私保護聲明：</span>
+              為嚴格恪守職業道德與客戶隱私，本展示案所涉之組織名稱、財務數據與人名均已全數去識別化或採虛擬範例數據展示，聚焦於系統架構邏輯、流程重組與解決方案之呈現。
+            </div>
+          </div>
+        </div>
+
+        <!-- 彈窗底部按鈕 -->
+        <div class="p-5 border-t border-cream-200 bg-cream-50/50 flex items-center justify-between">
+          <div class="text-xs text-ink-400 flex items-center gap-1.5">
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-ink-400"></i>
+            <span>原始資料與程式碼依約保密</span>
+          </div>
+          <button @click="closeModal" class="px-6 py-2 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white text-xs font-medium transition-colors shadow-sm">
+            關閉
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const { createApp, ref, computed, onMounted, nextTick, watch } = Vue;
+
+    createApp({
+      setup() {
+        const selectedCategory = ref('all');
+        const activeModal = ref(null);
+
+        const categories = [
+          { id: 'all', name: '全部作品' },
+          { id: 'medical', name: '精準醫療衛教' },
+          { id: 'management', name: '組織管理模組' },
+          { id: 'workflow', name: '流程自動化' },
+          { id: 'education', name: 'SOP與教學' },
+        ];
+
+        const projects = [
+          {
+            id: 'pediatric-ngs',
+            category: 'medical',
+            categoryLabel: '精準醫療衛教',
+            iconName: 'dna',
+            iconBoxClass: 'bg-dustyRed-50 border border-dustyRed-100/80 text-dustyRed-500',
+            title: '兒科 NGS 次世代基因定序衛教導航系統',
+            subtitle: '健康台灣深耕計畫 • 兒科遺傳精準醫療互動平台',
+            status: '已交付臨床預覽',
+            bgClass: 'bg-dustyRed-50/50',
+            gentleInsight: '體恤父母面對罕見疾病與高額基因檢測時的恐懼與無助，以溫柔圓角色彩與 SDM 提問小卡化解看診焦慮。',
+            solidArchitecture: '建立臨床專家與家長雙軌分流、AI RAG 常規問答知識庫，並具備深耕計畫即時成果追蹤與結案數據匯出。',
+            tags: ['兒科遺傳', 'AI衛教', '醫病共享決策', '雙軌分流'],
+            painPoint: '臨床醫師看診時間極為緊湊（僅數分鐘），而罕見疾病基因檢測動輒數萬且報告艱澀。家長在候診時高度焦慮、進診間往往腦袋一片空白不知從何問起。',
+            features: [
+              '雙軌分流：一鍵切換「🌸 爸媽易讀版」與「🩺 臨床專家適應症 Matrix」。',
+              'SDM 醫病共享小卡：候診 1 分鐘勾選疑慮，一鍵生成精美提問卡直接存進手機相簿。',
+              '門診 AI RAG 助手：內建王禹期醫師五大常見衛教 FAQ（費用補助、抽血安全等）。',
+              '計畫成果戰情室：自動統計健康識能提升率(+36.4%)與衛教節省時間，支援匯出 CSV。'
+            ],
+            takeaway: '這套系統證明了：最尖端、最難懂的科技（NGS），只要透過體貼的人性化介面分流，就能轉化為讓家長安心、讓醫師省時的溫暖醫病橋樑。'
+          },
+          {
+            id: 'hospital-jb',
+            category: 'management',
+            categoryLabel: '組織管理模組',
+            iconName: 'network',
+            iconBoxClass: 'bg-sand-50 border border-sand-100/80 text-sand-500',
+            title: '組織架構與職務說明書 (JB) 產生器',
+            subtitle: '組織架構階層視覺化 • 職缺職能規格標準化模組',
+            status: '離線輕量運行',
+            bgClass: 'bg-sand-50',
+            gentleInsight: '同理主管與人資在盤點組織分工與編寫職務說明書時的繁複耗時，將複雜的科室職責轉化為結構化表單。',
+            solidArchitecture: '建立多階層組織樹狀關聯、標準化職能指標庫，自動即時排版生成符合評鑑規範的標準 JB 文件。',
+            tags: ['組織架構', '職務說明書', '流程標準化', '人資模組'],
+            painPoint: '組織擴編或評鑑稽核時，各部門職務說明書格式不一、權責劃分模糊，人工修訂耗費數週且版本容易混亂。',
+            features: [
+              '組織階層連動架構：直覺點選即可配置上下隸屬與指揮體系，自動生成視覺化架構圖。',
+              '職務規格模組化：內建職掌職責、專業資格條件與核心職能標準範本。',
+              '一鍵導出標準格式：自動排版輸出標準規格文件，省去 90% 重複排版工時。',
+              '離線私有安全運作：無需依賴複雜伺服器，單機瀏覽器即可安全運算，保障內部機密。'
+            ],
+            takeaway: '將傳統分散在各部門的紙本規定，收斂成一套任何人都能輕鬆填寫的標準產生器，讓組織治理變得清晰可循。'
+          },
+          {
+            id: 'billing-assistant',
+            category: 'workflow',
+            categoryLabel: '流程自動化',
+            iconName: 'receipt',
+            iconBoxClass: 'bg-sage-50 border border-sage-100/80 text-sage-600',
+            title: '服務確認書開立小幫手',
+            subtitle: '純公式防呆 • 零巨集 (No VBA) • 候選人帳務自動匯總',
+            status: '已正式導入使用',
+            bgClass: 'bg-sage-50/60',
+            gentleInsight: '體貼所有人使用電腦時對「巨集安全性警告」的恐慌，堅持純公式打造，讓每位同事一開檔案就能安心操作。',
+            solidArchitecture: '採用多條件篩選、動態 TEXTJOIN 字串串接與級距費率連動，下拉客戶即可全自動產出符合 A4 版型的正式請款 PDF。',
+            tags: ['零代碼自動化', '無痛導入', '防呆架構', '商業流程精實'],
+            painPoint: '人資顧問每個月要手動計算多位醫師/醫事人員在不同推進階段的請款金額，還得人工複製貼上備註文字到請款單中，耗時且容易出錯。',
+            features: [
+              'No-VBA 安全設計：任何人開啟均無跳窗警告，企業環境相容度 100%。',
+              '三步操作流：登記進度 ➔ 切換客戶 ➔ 一鍵預覽確認，30 秒完成整份請款單。',
+              '自動字串組裝：透過進階公式自動把該客戶本月推進的所有名單組合成條列備註。',
+              '彈性計費開關：支援管顧費、人才費獨立切換與急件/特批係數自動折讓。'
+            ],
+            takeaway: '自動化不一定要寫大軟體。善用現有工具的深度邏輯，就能在完全不增加同仁負擔的前提下，省下 80% 的繁瑣時間。'
+          },
+          {
+            id: 'talent-sop',
+            category: 'education',
+            categoryLabel: 'SOP與教學',
+            iconName: 'book-open',
+            iconBoxClass: 'bg-cream-100 border border-cream-200 text-ink-700',
+            title: '小白也能懂的專案建構 Master SOP 知識庫',
+            subtitle: '將複雜的 AI 協同、雲端與程式管線，轉化為親切的生活比喻',
+            status: '完整方法論文件庫',
+            bgClass: 'bg-cream-100/60',
+            gentleInsight: '不以技術高深自居，用「雲端檔案櫃、管家、快遞員、保險箱」等溫暖語言，讓沒寫過程式的人也能毫無恐懼地跟上。',
+            solidArchitecture: '串聯 Antigravity (AI)、GitHub、clasp、Google Apps Script 與試算表，建立工業級版本控制與自動化部署標準流程。',
+            tags: ['知識轉譯', '人機協同教學', '標準作業程序', '白話思維'],
+            painPoint: '現代軟體開發工具鏈（Git, CLI, API）充滿了術語壁壘，非本科系同仁一聽到就退避三舍，導致團隊數位轉型總是卡在第一步。',
+            features: [
+              '生活化比喻架構：Google 試算表是檔案櫃、GAS 是管家、clasp 是快遞、GitHub 是保險箱。',
+              '6 大實操步驟圖解：按部就班拆解如何下指令、如何驗證成果。',
+              '零盲點除錯專章：整理出新手最容易犯的 3 大迷思與預防避坑心法。',
+              '乙烯催化實踐：讓團隊成員不再恐懼 AI，能自主與 AI 協同完成專案建構。'
+            ],
+            takeaway: '最高級的專業不是把簡單的事情講得很難，而是能把最難的事情講到每個人眼裡都有光芒。這就是乙烯蘋果的催化價值。'
+          }
+        ];
+
+        const filteredProjects = computed(() => {
+          if (selectedCategory.value === 'all') return projects;
+          return projects.filter(p => p.category === selectedCategory.value);
+        });
+
+        const openModal = (item) => {
+          activeModal.value = item;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const closeModal = () => {
+          activeModal.value = null;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        watch(selectedCategory, () => {
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        });
+
+        onMounted(() => {
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        });
+
+        return {
+          selectedCategory,
+          categories,
+          projects,
+          filteredProjects,
+          activeModal,
+          openModal,
+          closeModal
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
