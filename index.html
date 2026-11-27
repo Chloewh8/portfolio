@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -150,6 +150,7 @@
           <a href="#journey" class="hover:text-dustyRed-600 transition-colors">背景與實務足跡</a>
           <a href="#projects" class="hover:text-dustyRed-600 transition-colors">解方代表作</a>
           <a href="#thinking" class="hover:text-dustyRed-600 transition-colors">拆解思維</a>
+          <a href="#gallery" class="hover:text-dustyRed-600 transition-colors">生活與創作</a>
           <a href="#connect" class="hover:text-dustyRed-600 transition-colors">交流與共創</a>
         </nav>
 
@@ -567,6 +568,185 @@
         </div>
       </section>
 
+      <!-- 生活與創作拍立得小畫廊 LIFE & GALLERY -->
+      <section id="gallery" class="py-20 md:py-28 bg-[#fbf9f5] border-t border-cream-200/70 scroll-mt-16">
+        <div class="max-w-4xl mx-auto px-6">
+          <div class="text-center mb-12">
+            <div class="text-xs uppercase tracking-widest text-dustyRed-500 font-semibold mb-2">Life & Inspirations</div>
+            <h2 class="text-2xl md:text-3xl font-semibold text-ink-900">
+              生活拍立得小畫廊
+            </h2>
+            <p class="text-sm text-ink-500 mt-2 max-w-xl mx-auto">
+              旅行看見的廣闊風景、親手繪製的節慶祝福，認真體驗生活的每刻微光。
+            </p>
+
+            <!-- 分類標籤切換 (歐洲旅行 / 手繪賀年卡 / 美味料理) -->
+            <div class="flex items-center justify-center gap-2.5 mt-8 flex-wrap">
+              <button 
+                v-for="cat in galleryCategories" 
+                :key="cat.id"
+                @click="switchGalleryCategory(cat.id)"
+                :class="currentGalleryTab === cat.id ? 'bg-ink-900 text-cream-50 shadow-sm' : 'bg-white text-ink-600 border border-cream-200 hover:bg-cream-100'"
+                class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all flex items-center gap-2"
+              >
+                <span>{{ cat.name }}</span>
+                <span class="text-[10px] px-2 py-0.5 rounded-full" :class="currentGalleryTab === cat.id ? 'bg-white/20 text-white' : 'bg-cream-100 text-ink-500'">
+                  {{ cat.count }}
+                </span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 美味料理待上架預覽卡片 (當切換到 cuisine 時展示) -->
+          <div v-if="currentGalleryTab === 'cuisine'" class="max-w-md mx-auto text-center p-10 bg-white rounded-3xl border border-cream-200/80 shadow-sm space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 text-amber-500 flex items-center justify-center mx-auto text-2xl shadow-xs">
+              🍳
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-ink-900">美味料理日常整理中</h3>
+              <p class="text-xs text-ink-500 mt-1.5 leading-relaxed">
+                熱騰騰的家常滋味、隨性療癒的烘焙與私房美食清單。<br>
+                照片即將補上，敬請期待！
+              </p>
+            </div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cream-100 text-[11px] text-ink-600 font-medium">
+              <span class="w-1.5 h-1.5 rounded-full bg-sage-500 animate-pulse"></span>
+              <span>隨後補上</span>
+            </div>
+          </div>
+
+          <!-- 拍立得輪播主容器 (固定比例、置中、協調優雅) -->
+          <div v-else class="relative">
+            <!-- 拍立得相框本體 -->
+            <div class="bg-white rounded-3xl p-4 sm:p-7 shadow-md border border-cream-200/90 max-w-xl mx-auto flex flex-col justify-between group transition-all duration-300 relative">
+              <!-- 頂部日系手寫感膠帶裝飾 -->
+              <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 w-28 h-7 bg-sand-100/90 border border-sand-200/70 rounded-xs shadow-xs rotate-[-1deg] pointer-events-none backdrop-blur-xs flex items-center justify-center">
+                <span class="text-[10px] text-sand-500 font-mono tracking-widest uppercase font-medium">CHLOE SNAP</span>
+              </div>
+
+              <!-- 照片置中展示盒 (長寬比 4:3 完全固定，所有照片置中無裁切) -->
+              <div 
+                class="w-full aspect-[4/3] rounded-2xl bg-[#f7f5f0] border border-cream-200/60 overflow-hidden relative flex items-center justify-center shadow-inner cursor-pointer"
+                @click="openLightbox(currentGalleryPhoto)"
+                title="點擊放大查看大圖"
+              >
+                <!-- 柔和背光高斯模糊氛圍 -->
+                <img 
+                  :src="currentGalleryPhoto.src" 
+                  class="absolute inset-0 w-full h-full object-cover filter blur-2xl opacity-25 scale-125 pointer-events-none" 
+                  alt=""
+                />
+                
+                <!-- 主影像 (置中、完整保留比例與所有字樣、平滑過渡) -->
+                <img 
+                  :src="currentGalleryPhoto.src" 
+                  :alt="currentGalleryPhoto.title" 
+                  class="relative z-10 max-h-full max-w-full w-auto h-auto object-contain p-2 sm:p-4 transition-transform duration-500 group-hover:scale-[1.02] drop-shadow-sm select-none"
+                />
+
+                <!-- 點擊放大查看指示徽章 -->
+                <div class="absolute bottom-3 right-3 z-20 px-2.5 py-1 rounded-full bg-ink-900/65 backdrop-blur-sm text-white text-[11px] opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shadow-sm">
+                  <i data-lucide="zoom-in" class="w-3.5 h-3.5"></i>
+                  <span>放大原圖</span>
+                </div>
+              </div>
+
+              <!-- 照片說明資訊區 (純白拍立得底襯，手寫溫度) -->
+              <div class="pt-5 px-1 sm:px-2 flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                  <span class="inline-flex items-center gap-1.5 text-[11px] font-medium text-dustyRed-600 bg-dustyRed-50 border border-dustyRed-100/80 px-2.5 py-0.5 rounded-full">
+                    <i data-lucide="map-pin" class="w-3 h-3"></i>
+                    <span>{{ currentGalleryPhoto.location }}</span>
+                  </span>
+                  <span class="text-xs font-mono font-medium text-ink-400">
+                    {{ String(currentGalleryIndex + 1).padStart(2, '0') }} / {{ String(currentPhotoList.length).padStart(2, '0') }}
+                  </span>
+                </div>
+                
+                <h3 class="text-base sm:text-lg font-semibold text-ink-900 mb-1.5">
+                  {{ currentGalleryPhoto.title }}
+                </h3>
+                <p class="text-xs sm:text-sm text-ink-500 leading-relaxed min-h-[42px]">
+                  {{ currentGalleryPhoto.desc }}
+                </p>
+              </div>
+
+              <!-- 輪播切換按鈕 (Prev / Next & 圓點指示器) -->
+              <div class="pt-4 border-t border-cream-200/70 mt-4 flex items-center justify-between">
+                <button 
+                  @click="prevPhoto" 
+                  aria-label="上一張"
+                  class="w-9 h-9 rounded-full bg-cream-100 hover:bg-ink-900 hover:text-white text-ink-700 transition-colors flex items-center justify-center border border-cream-200/80"
+                >
+                  <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+
+                <!-- 圓點指示器 -->
+                <div class="flex items-center gap-1.5 overflow-x-auto max-w-[200px] px-2 py-1">
+                  <button 
+                    v-for="(p, idx) in currentPhotoList" 
+                    :key="p.id"
+                    @click="setPhoto(idx)"
+                    :aria-label="'跳至第 ' + (idx + 1) + ' 張'"
+                    :class="currentGalleryIndex === idx ? 'w-5 bg-dustyRed-500' : 'w-2 bg-cream-300 hover:bg-cream-400'"
+                    class="h-2 rounded-full transition-all duration-300"
+                  ></button>
+                </div>
+
+                <button 
+                  @click="nextPhoto" 
+                  aria-label="下一張"
+                  class="w-9 h-9 rounded-full bg-cream-100 hover:bg-ink-900 hover:text-white text-ink-700 transition-colors flex items-center justify-center border border-cream-200/80"
+                >
+                  <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 下方縮圖點選快速列 (可橫向捲動) -->
+            <div class="max-w-xl mx-auto mt-6 flex items-center gap-2 overflow-x-auto pb-2 px-1 scrollbar-thin">
+              <button 
+                v-for="(p, idx) in currentPhotoList" 
+                :key="'thumb-' + p.id"
+                @click="setPhoto(idx)"
+                :class="currentGalleryIndex === idx ? 'ring-2 ring-dustyRed-500 ring-offset-2 scale-105' : 'opacity-60 hover:opacity-100'"
+                class="w-14 h-12 rounded-xl bg-white border border-cream-200 overflow-hidden shrink-0 flex items-center justify-center transition-all p-1"
+              >
+                <img :src="p.src" :alt="p.title" class="w-full h-full object-contain" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 放大檢視燈箱 LIGHTBOX MODAL -->
+      <div 
+        v-if="activeLightboxPhoto" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/80 backdrop-blur-md transition-opacity"
+        @click.self="closeLightbox"
+      >
+        <div class="relative max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+          <button 
+            @click="closeLightbox"
+            aria-label="關閉放大檢視" 
+            class="absolute -top-12 right-0 p-2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors"
+          >
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+          <div class="bg-white rounded-3xl p-3 sm:p-5 shadow-2xl max-h-[80vh] flex flex-col items-center justify-center overflow-hidden">
+            <img 
+              :src="activeLightboxPhoto.src" 
+              :alt="activeLightboxPhoto.title" 
+              class="max-h-[70vh] max-w-full object-contain rounded-2xl"
+            />
+            <div class="mt-3 text-center">
+              <div class="text-xs text-dustyRed-600 font-medium">{{ activeLightboxPhoto.location }}</div>
+              <div class="text-sm font-semibold text-ink-900 mt-0.5">{{ activeLightboxPhoto.title }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 交流與共創 CONNECT (不商業化、溫暖真誠) -->
       <section id="connect" class="py-20 md:py-28">
         <div class="max-w-3xl mx-auto px-6 text-center">
@@ -678,6 +858,166 @@
 
         <!-- 彈窗內容 -->
         <div class="p-6 space-y-6 text-sm">
+          <!-- 系統介面視圖與原型微縮 (UI PREVIEW MOCKUP) -->
+          <div>
+            <h4 class="font-semibold text-ink-700 text-xs tracking-wider uppercase mb-2.5 flex items-center gap-1.5">
+              <i data-lucide="layout" class="w-3.5 h-3.5 text-dustyRed-500"></i>
+              <span>系統原型視圖（去識別化架構預覽）</span>
+            </h4>
+            <div class="rounded-2xl border border-cream-200 overflow-hidden bg-white shadow-sm">
+              <div class="bg-cream-100/90 px-3.5 py-2 border-b border-cream-200 flex items-center justify-between">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-dustyRed-300 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-sand-300 inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-sage-300 inline-block"></span>
+                </div>
+                <div class="text-[10px] text-ink-500 font-mono tracking-tight bg-white/90 px-3 py-0.5 rounded-full border border-cream-200/80 flex items-center gap-1">
+                  <i data-lucide="lock" class="w-2.5 h-2.5 text-sage-600"></i>
+                  <span>{{ activeModal.previewUrl || 'app://prototype.preview' }}</span>
+                </div>
+                <span class="text-[10px] text-ink-400 font-mono">v3.2</span>
+              </div>
+
+              <!-- pediatric-ngs -->
+              <div v-if="activeModal.id === 'pediatric-ngs'" class="p-4 sm:p-5 bg-gradient-to-b from-dustyRed-50/30 to-white space-y-3">
+                <div class="flex items-center justify-between pb-3 border-b border-cream-200/70">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-lg bg-dustyRed-500 text-white font-medium text-[11px] shadow-xs">🌸 爸媽易讀導航版</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-cream-100 text-ink-600 font-normal text-[11px] border border-cream-200">🩺 臨床專家適應症 Matrix</span>
+                  </div>
+                  <span class="text-[10px] text-sage-600 bg-sage-50 px-2 py-0.5 rounded-md border border-sage-200/60 font-medium">即時連動深耕計畫</span>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-cream-200/80 shadow-2xs space-y-2">
+                  <div class="flex items-center justify-between text-xs font-semibold text-ink-900">
+                    <span class="flex items-center gap-1.5"><i data-lucide="help-circle" class="w-3.5 h-3.5 text-dustyRed-500"></i> 候診常規衛教 Q1：抽血是否安全？費用補助如何申請？</span>
+                    <span class="text-[10px] text-dustyRed-600 font-mono">補助試算：通過</span>
+                  </div>
+                  <div class="grid grid-cols-3 gap-2 pt-1 text-[11px] text-center">
+                    <div class="p-2 rounded-lg bg-cream-50 border border-cream-200/60 text-ink-600">兒科遺傳代謝 NGS</div>
+                    <div class="p-2 rounded-lg bg-cream-50 border border-cream-200/60 text-ink-600">看診溝通省時 -65%</div>
+                    <div class="p-2 rounded-lg bg-cream-50 border border-cream-200/60 text-ink-600">SDM 提問卡自動生成</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- hospital-jb -->
+              <div v-else-if="activeModal.id === 'hospital-jb'" class="p-4 sm:p-5 bg-gradient-to-b from-sand-50/40 to-white space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-cream-200/70 text-xs">
+                  <span class="font-medium text-ink-700 flex items-center gap-1"><i data-lucide="network" class="w-3.5 h-3.5 text-sand-500"></i> 組織層級關聯配置樹</span>
+                  <span class="text-[10px] px-2 py-0.5 rounded bg-sand-100 text-sand-600 font-mono">評鑑合規規格</span>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-cream-200/80 shadow-2xs text-xs space-y-2">
+                  <div class="flex items-center gap-2 text-ink-500 text-[11px]">
+                    <span class="px-2 py-0.5 bg-cream-100 rounded text-ink-700 font-medium">總院長室</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 bg-cream-100 rounded text-ink-700 font-medium">醫事行政部 / 感控小組</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 bg-sand-50 text-sand-600 rounded font-semibold border border-sand-200/60">感控護理師 (N3 職級)</span>
+                  </div>
+                  <div class="p-2.5 rounded-lg bg-sand-50/50 border border-sand-100 text-[11px] text-ink-600 flex justify-between items-center">
+                    <span>標準職掌：院內感染監測、通報法規與臨床防護指導</span>
+                    <span class="text-[10px] text-sand-600 font-medium">A4 自動排版 Ready</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- talent-case-crm -->
+              <div v-else-if="activeModal.id === 'talent-case-crm'" class="p-4 sm:p-5 bg-gradient-to-b from-amber-50/30 to-white space-y-3">
+                <div class="grid grid-cols-5 gap-1.5 text-center text-[10px]">
+                  <div class="p-1.5 rounded-lg bg-white border border-cream-200/80">
+                    <div class="text-ink-400">24hr 完成</div>
+                    <div class="font-bold text-ink-800 text-xs mt-0.5">2</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-dustyRed-50/70 border border-dustyRed-100 text-dustyRed-600">
+                    <div class="text-dustyRed-400">待回簽</div>
+                    <div class="font-bold text-xs mt-0.5">3 ⚠️</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-sand-50 border border-sand-100 text-sand-600">
+                    <div class="text-sand-400">急件案數</div>
+                    <div class="font-bold text-xs mt-0.5">1 🔥</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-white border border-cream-200/80">
+                    <div class="text-ink-400">進行中職缺</div>
+                    <div class="font-bold text-ink-800 text-xs mt-0.5">11</div>
+                  </div>
+                  <div class="p-1.5 rounded-lg bg-sage-50 border border-sage-100 text-sage-600">
+                    <div class="text-sage-500">正式到任</div>
+                    <div class="font-bold text-xs mt-0.5">12 🟢</div>
+                  </div>
+                </div>
+                <div class="p-2.5 bg-white rounded-xl border border-cream-200/80 shadow-2xs space-y-1.5 text-[11px]">
+                  <div class="flex items-center justify-between text-ink-500">
+                    <span>委任機構案例：重仁專科醫院</span>
+                    <span class="text-[10px] text-sage-600 font-medium">PIN 敏捷權限鎖</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-[10px] font-mono text-ink-400 overflow-x-auto pb-1">
+                    <span class="px-2 py-0.5 rounded bg-cream-100 text-ink-700">開案(14)</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 rounded bg-cream-100 text-ink-700">面談(8)</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 rounded bg-cream-100 text-ink-700">商洽(4)</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 rounded bg-dustyRed-50 text-dustyRed-600 border border-dustyRed-100 font-medium">回簽(3)</span>
+                    <span>➔</span>
+                    <span class="px-2 py-0.5 rounded bg-sage-50 text-sage-700 border border-sage-100 font-medium">到任(12)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- billing-assistant -->
+              <div v-else-if="activeModal.id === 'billing-assistant'" class="p-4 sm:p-5 bg-gradient-to-b from-sage-50/40 to-white space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-cream-200/70 text-xs">
+                  <span class="font-semibold text-ink-900 flex items-center gap-1.5"><i data-lucide="receipt" class="w-3.5 h-3.5 text-sage-600"></i> 正式服務確認書（公版請款單格式）</span>
+                  <span class="text-[10px] text-sage-700 bg-sage-100/70 px-2 py-0.5 rounded font-mono">No-VBA 純公式</span>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-cream-200/80 shadow-2xs space-y-2 text-[11px]">
+                  <div class="flex items-center justify-between text-ink-500 text-[10px] border-b border-cream-100 pb-1.5">
+                    <span>受文機構：重仁骨科醫院</span>
+                    <span>合約期：2026/01 ~ 2026/12</span>
+                  </div>
+                  <div class="space-y-1 text-ink-600">
+                    <div class="flex justify-between"><span>項目一：醫療經營管理顧問月費</span><span class="font-mono text-ink-800">$50,000</span></div>
+                    <div class="flex justify-between"><span>項目二：人才庫本月推進名單（TEXTJOIN 自動條列）</span><span class="font-mono text-ink-800">$32,500</span></div>
+                  </div>
+                  <div class="pt-1.5 border-t border-cream-200/80 flex justify-between items-center font-semibold text-xs text-ink-900">
+                    <span>本期請款總額（含稅）</span>
+                    <span class="font-mono text-sage-700 text-sm">NT$ 82,500</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- talent-sop -->
+              <div v-else class="p-4 sm:p-5 bg-gradient-to-b from-cream-100/50 to-white space-y-3">
+                <div class="flex items-center justify-between pb-2 border-b border-cream-200/70 text-xs font-semibold text-ink-800">
+                  <span class="flex items-center gap-1.5"><i data-lucide="book-open" class="w-3.5 h-3.5 text-ink-600"></i> 小白專案建構 Master SOP 知識管線</span>
+                  <span class="text-[10px] text-ink-500 font-mono">生活化比喻</span>
+                </div>
+                <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+                  <div class="p-2 rounded-xl bg-white border border-cream-200/80 shadow-2xs">
+                    <div class="text-base mb-1">🗄️</div>
+                    <div class="font-semibold text-ink-800">檔案櫃</div>
+                    <div class="text-[9px] text-ink-400 mt-0.5">Google 試算表</div>
+                  </div>
+                  <div class="p-2 rounded-xl bg-white border border-cream-200/80 shadow-2xs">
+                    <div class="text-base mb-1">🤵</div>
+                    <div class="font-semibold text-ink-800">管家</div>
+                    <div class="text-[9px] text-ink-400 mt-0.5">Apps Script</div>
+                  </div>
+                  <div class="p-2 rounded-xl bg-white border border-cream-200/80 shadow-2xs">
+                    <div class="text-base mb-1">📦</div>
+                    <div class="font-semibold text-ink-800">快遞員</div>
+                    <div class="text-[9px] text-ink-400 mt-0.5">Google clasp</div>
+                  </div>
+                  <div class="p-2 rounded-xl bg-white border border-cream-200/80 shadow-2xs">
+                    <div class="text-base mb-1">🔐</div>
+                    <div class="font-semibold text-ink-800">保險箱</div>
+                    <div class="text-[9px] text-ink-400 mt-0.5">GitHub 版本控管</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div>
             <h4 class="font-semibold text-dustyRed-600 text-xs tracking-wider uppercase mb-2 flex items-center gap-1.5">
               <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
@@ -750,6 +1090,7 @@
           { label: '背景與實務足跡', href: '#journey' },
           { label: '解方代表作', href: '#projects' },
           { label: '拆解思維', href: '#thinking' },
+          { label: '生活與創作', href: '#gallery' },
           { label: '交流與共創', href: '#connect' }
         ];
 
@@ -775,6 +1116,7 @@
         const projects = [
           {
             id: 'pediatric-ngs',
+            previewUrl: 'app://pediatric-ngs.tw/sdm-navigator',
             category: 'medical',
             categoryLabel: '精準醫療衛教',
             iconName: 'dna',
@@ -797,6 +1139,7 @@
           },
           {
             id: 'hospital-jb',
+            previewUrl: 'app://hospital-jb.internal/spec-generator',
             category: 'management',
             categoryLabel: '組織管理模組',
             iconName: 'network',
@@ -819,6 +1162,7 @@
           },
           {
             id: 'talent-case-crm',
+            previewUrl: 'app://asia-one.internal/crm/talent-pipeline',
             category: 'workflow',
             categoryLabel: '案件進度控管',
             iconName: 'kanban',
@@ -841,6 +1185,7 @@
           },
           {
             id: 'billing-assistant',
+            previewUrl: 'excel://AsiaOne_Service_Billing_Assistant.xlsx',
             category: 'workflow',
             categoryLabel: '流程自動化',
             iconName: 'receipt',
@@ -863,6 +1208,7 @@
           },
           {
             id: 'talent-sop',
+            previewUrl: 'app://docs.sop/master-pipeline-guide',
             category: 'education',
             categoryLabel: 'SOP與教學',
             iconName: 'book-open',
@@ -897,6 +1243,191 @@
           });
         };
 
+        // 生活拍立得小畫廊狀態與資料 (Life & Gallery)
+        const currentGalleryTab = ref('europe');
+        const currentGalleryIndex = ref(0);
+        const activeLightboxPhoto = ref(null);
+
+        const galleryCategories = [
+          { id: 'europe', name: '歐洲漫遊', count: 10 },
+          { id: 'cards', name: '手繪賀年卡', count: 5 },
+          { id: 'cuisine', name: '美味料理', count: '隨後補上' }
+        ];
+
+        const galleryPhotos = {
+          europe: [
+            {
+              id: 1,
+              src: 'gallery/europe-01-selfie.webp',
+              title: '冬日暖陽與查理大橋',
+              location: '捷克 • 布拉格',
+              desc: '冬日布拉格的溫柔陽光灑在臉龐，圍著圍巾帶著滿滿的好奇心，走進每一條歷史石板路。'
+            },
+            {
+              id: 2,
+              src: 'gallery/europe-02-untersberg.jpg',
+              title: '溫特斯山雲海湧動',
+              location: '奧地利 • 溫特斯山',
+              desc: '搭乘纜車登上阿爾卑斯山脈的溫特斯山頂，看著腳下無邊無際翻騰的壯闊雲海。'
+            },
+            {
+              id: 3,
+              src: 'gallery/europe-03-stephansdom.jpg',
+              title: '聖史蒂芬大教堂',
+              location: '奧地利 • 維也納',
+              desc: '仰望數百年歷史的哥德式高聳尖塔與幾何琉璃彩瓦，感受時間在石雕上沉澱的莊嚴。'
+            },
+            {
+              id: 4,
+              src: 'gallery/europe-04-prague-street.jpg',
+              title: '布拉格老城街道',
+              location: '捷克 • 老城區',
+              desc: '漫步在典雅的中世紀街道與石板路，抬頭便是童話般的巴洛克建築與天文鐘塔樓。'
+            },
+            {
+              id: 5,
+              src: 'gallery/europe-05-salzburg.jpg',
+              title: '薩爾斯堡高台倒影',
+              location: '奧地利 • 薩爾斯堡',
+              desc: '高台玻璃窗前的透光倒影，將遠方的群山、要塞古堡與旅人的身影巧妙框成一幅畫。'
+            },
+            {
+              id: 6,
+              src: 'gallery/europe-06-charles-bridge.jpg',
+              title: '遠眺查理大橋',
+              location: '捷克 • 伏爾塔瓦河',
+              desc: '秋色漸濃的樹梢掩映著伏爾塔瓦河，查理大橋靜靜橫跨水面，見證數百年的波光粼粼。'
+            },
+            {
+              id: 7,
+              src: 'gallery/europe-07-hallstatt.jpg',
+              title: '夢幻仙境哈修塔特',
+              location: '奧地利 • 哈修塔特',
+              desc: '被高聳山脈與清澈湖水緊緊擁抱的世界遺產木屋小鎮，每一眼都是明信片裡的風景。'
+            },
+            {
+              id: 8,
+              src: 'gallery/europe-08-austria-metro.jpg',
+              title: '奧地利地鐵光影',
+              location: '奧地利 • 維也納',
+              desc: '極具現代流線感與縱深美學的圓弧地鐵隧道，燈管在鋼構手扶梯上拉出優美的光影弧線。'
+            },
+            {
+              id: 9,
+              src: 'gallery/europe-09-salzach-chestnut.jpg',
+              title: '薩爾察赫河畔的烤栗子',
+              location: '奧地利 • 薩爾察赫河畔',
+              desc: '微涼秋日漫步河畔，手裡握著剛出爐、香甜熱騰騰的現烤栗子，是最暖心踏實的滋味。'
+            },
+            {
+              id: 10,
+              src: 'gallery/europe-10-hallstatt-dessert.jpg',
+              title: '哈修塔特湖畔甜點',
+              location: '奧地利 • 哈修塔特',
+              desc: '酥脆金黃的可頌、酸甜誘人的莓果塔，伴隨著湖面優雅滑過的天鵝，享受最平靜的午後。'
+            }
+          ],
+          cards: [
+            {
+              id: 11,
+              src: 'gallery/card-04-snake-2025.webp',
+              title: '2025 蛇麼都順',
+              location: '手繪創作 • 2025 乙巳年',
+              desc: '頂著吉祥小橘子的溫柔小蛇、可愛翻肚小貓，與一顆飽滿紅蘋果——祝大家新年「蛇麼都順」🍎！'
+            },
+            {
+              id: 12,
+              src: 'gallery/card-03-dragon-2024.png',
+              title: '2024 龍年吉祥',
+              location: '手繪創作 • 2024 甲辰年',
+              desc: '趴在圓滾滾狗狗背上的小女孩與親切小青龍，在溫暖星光下迎接嶄新又充滿希望的一年。'
+            },
+            {
+              id: 13,
+              src: 'gallery/card-05-rabbit-2023.jpg',
+              title: '2023 吃飽！睡好！賺大錢！',
+              location: '手繪創作 • 2023 癸卯年',
+              desc: '圓臉小狗與小白兔的純粹心願：願每一位朋友在新的一年都能「吃飽！睡好！賺大錢！」'
+            },
+            {
+              id: 14,
+              src: 'gallery/card-02-tiger-2022.png',
+              title: '2022 虎虎平安、虎虎幸福',
+              location: '手繪創作 • 2022 壬寅年',
+              desc: '貓咪和小老虎並肩翻肚懶洋洋午睡，把最軟萌的祝福送給身邊每一位珍惜的夥伴。'
+            },
+            {
+              id: 15,
+              src: 'gallery/card-01-lucky-horse.webp',
+              title: '好運加馬',
+              location: '手繪創作 • 療癒插畫',
+              desc: '長著粉彩小角的小斑馬與小貓咪在繁花叢中奔跑，為日常注入滿滿的正向好運加馬力量。'
+            }
+          ]
+        };
+
+        const currentPhotoList = computed(() => {
+          return galleryPhotos[currentGalleryTab.value] || [];
+        });
+
+        const currentGalleryPhoto = computed(() => {
+          const list = currentPhotoList.value;
+          if (list.length === 0) return {};
+          return list[currentGalleryIndex.value] || list[0];
+        });
+
+        const switchGalleryCategory = (tabId) => {
+          currentGalleryTab.value = tabId;
+          currentGalleryIndex.value = 0;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const prevPhoto = () => {
+          const list = currentPhotoList.value;
+          if (list.length === 0) return;
+          if (currentGalleryIndex.value > 0) {
+            currentGalleryIndex.value--;
+          } else {
+            currentGalleryIndex.value = list.length - 1;
+          }
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const nextPhoto = () => {
+          const list = currentPhotoList.value;
+          if (list.length === 0) return;
+          if (currentGalleryIndex.value < list.length - 1) {
+            currentGalleryIndex.value++;
+          } else {
+            currentGalleryIndex.value = 0;
+          }
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const setPhoto = (idx) => {
+          currentGalleryIndex.value = idx;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const openLightbox = (photo) => {
+          activeLightboxPhoto.value = photo;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const closeLightbox = () => {
+          activeLightboxPhoto.value = null;
+        };
+
         const closeModal = () => {
           activeModal.value = null;
           nextTick(() => {
@@ -927,7 +1458,19 @@
           isMobileMenuOpen,
           toggleMobileMenu,
           closeMobileMenu,
-          navLinks
+          navLinks,
+          currentGalleryTab,
+          currentGalleryIndex,
+          activeLightboxPhoto,
+          galleryCategories,
+          currentPhotoList,
+          currentGalleryPhoto,
+          switchGalleryCategory,
+          prevPhoto,
+          nextPhoto,
+          setPhoto,
+          openLightbox,
+          closeLightbox
         };
       }
     }).mount('#app');
