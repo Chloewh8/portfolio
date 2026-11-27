@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
@@ -597,26 +597,7 @@
             </div>
           </div>
 
-          <!-- 美味料理待上架預覽卡片 (當切換到 cuisine 時展示) -->
-          <div v-if="currentGalleryTab === 'cuisine'" class="max-w-md mx-auto text-center p-10 bg-white rounded-3xl border border-cream-200/80 shadow-sm space-y-4">
-            <div class="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 text-amber-500 flex items-center justify-center mx-auto text-2xl shadow-xs">
-              🍳
-            </div>
-            <div>
-              <h3 class="text-base font-semibold text-ink-900">美味料理日常整理中</h3>
-              <p class="text-xs text-ink-500 mt-1.5 leading-relaxed">
-                熱騰騰的家常滋味、隨性療癒的烘焙與私房美食清單。<br>
-                照片即將補上，敬請期待！
-              </p>
-            </div>
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cream-100 text-[11px] text-ink-600 font-medium">
-              <span class="w-1.5 h-1.5 rounded-full bg-sage-500 animate-pulse"></span>
-              <span>隨後補上</span>
-            </div>
-          </div>
-
-          <!-- 拍立得輪播主容器 (固定比例、置中、協調優雅) -->
-          <div v-else class="relative">
+          <div class="relative">
             <!-- 拍立得相框本體 -->
             <div class="bg-white rounded-3xl p-4 sm:p-7 shadow-md border border-cream-200/90 max-w-xl mx-auto flex flex-col justify-between group transition-all duration-300 relative">
               <!-- 頂部日系手寫感膠帶裝飾 -->
@@ -666,9 +647,6 @@
                 <h3 class="text-base sm:text-lg font-semibold text-ink-900 mb-1.5">
                   {{ currentGalleryPhoto.title }}
                 </h3>
-                <p class="text-xs sm:text-sm text-ink-500 leading-relaxed min-h-[42px]">
-                  {{ currentGalleryPhoto.desc }}
-                </p>
               </div>
 
               <!-- 輪播切換按鈕 (Prev / Next & 圓點指示器) -->
@@ -947,7 +925,7 @@
                 </div>
                 <div class="p-2.5 bg-white rounded-xl border border-cream-200/80 shadow-2xs space-y-1.5 text-[11px]">
                   <div class="flex items-center justify-between text-ink-500">
-                    <span>委任機構案例：重仁專科醫院</span>
+                    <span>委任機構案例：專科醫療機構 (代號 H01)</span>
                     <span class="text-[10px] text-sage-600 font-medium">PIN 敏捷權限鎖</span>
                   </div>
                   <div class="flex items-center gap-1 text-[10px] font-mono text-ink-400 overflow-x-auto pb-1">
@@ -972,7 +950,7 @@
                 </div>
                 <div class="p-3 bg-white rounded-xl border border-cream-200/80 shadow-2xs space-y-2 text-[11px]">
                   <div class="flex items-center justify-between text-ink-500 text-[10px] border-b border-cream-100 pb-1.5">
-                    <span>受文機構：重仁骨科醫院</span>
+                    <span>受文機構：區域專科醫院 (範例代號 H01)</span>
                     <span>合約期：2026/01 ~ 2026/12</span>
                   </div>
                   <div class="space-y-1 text-ink-600">
@@ -1251,7 +1229,7 @@
         const galleryCategories = [
           { id: 'europe', name: '歐洲漫遊', count: 10 },
           { id: 'cards', name: '手繪賀年卡', count: 5 },
-          { id: 'cuisine', name: '美味料理', count: '隨後補上' }
+          { id: 'cuisine', name: '美味料理', count: 8 }
         ];
 
         const galleryPhotos = {
@@ -1361,7 +1339,56 @@
               src: 'gallery/card-01-lucky-horse.webp',
               title: '好運加馬',
               location: '手繪創作 • 療癒插畫',
-              desc: '長著粉彩小角的小斑馬與小貓咪在繁花叢中奔跑，為日常注入滿滿的正向好運加馬力量。'
+            }
+          ],
+          cuisine: [
+            {
+              id: 16,
+              src: 'gallery/cuisine-01-lemon-tart.jpg',
+              title: '檸檬塔',
+              location: '自製烘焙'
+            },
+            {
+              id: 17,
+              src: 'gallery/cuisine-02-french-toast.jpg',
+              title: '法國吐司',
+              location: '自製烘焙'
+            },
+            {
+              id: 18,
+              src: 'gallery/cuisine-03-blueberry-chiffon.jpg',
+              title: '藍莓巧克力蛋糕',
+              location: '自製烘焙'
+            },
+            {
+              id: 19,
+              src: 'gallery/cuisine-04-mini-toast.jpg',
+              title: '小吐司',
+              location: '自製烘焙'
+            },
+            {
+              id: 20,
+              src: 'gallery/cuisine-05-lunch-set.jpg',
+              title: '午餐（魚湯、煎蛋、蘿蔔糕）',
+              location: '自製料理'
+            },
+            {
+              id: 21,
+              src: 'gallery/cuisine-06-dumplings.jpg',
+              title: '自己包水餃',
+              location: '自製料理'
+            },
+            {
+              id: 22,
+              src: 'gallery/cuisine-07-cafe-feiyan.jpg',
+              title: '喜歡的咖啡廳 啡湮',
+              location: '咖啡廳探店'
+            },
+            {
+              id: 23,
+              src: 'gallery/cuisine-08-croissants.jpg',
+              title: '牛角麵包',
+              location: '自製烘焙'
             }
           ]
         };
