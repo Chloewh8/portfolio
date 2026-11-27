@@ -144,8 +144,97 @@
           <a href="#thinking" class="hover:text-dustyRed-600 transition-colors">拆解思維</a>
           <a href="#connect" class="hover:text-dustyRed-600 transition-colors">交流與共創</a>
         </nav>
+
+        <!-- 手機版選單漢堡按鈕 (md:hidden) -->
+        <button 
+          @click="toggleMobileMenu" 
+          aria-label="開啟選單"
+          class="md:hidden p-2 rounded-xl text-ink-700 hover:text-dustyRed-600 hover:bg-cream-100 transition-all flex items-center justify-center border border-cream-200/80 bg-white/70 shadow-sm"
+        >
+          <svg class="w-5 h-5 stroke-[2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" x2="20" y1="12" y2="12"></line>
+            <line x1="4" x2="20" y1="6" y2="6"></line>
+            <line x1="4" x2="20" y1="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
     </header>
+
+    <!-- 手機版側邊滑出抽屜選單 (MOBILE SIDE DRAWER) -->
+    <!-- 遮罩背景 (Backdrop overlay) -->
+    <div 
+      v-if="isMobileMenuOpen"
+      @click="closeMobileMenu"
+      class="fixed inset-0 z-50 bg-ink-900/40 backdrop-blur-sm transition-opacity md:hidden"
+    ></div>
+
+    <!-- 側邊抽屜面板 (從右側滑出) -->
+    <div 
+      class="fixed top-0 right-0 bottom-0 z-50 w-72 max-w-[80vw] bg-[#fdfbf7] border-l border-cream-200 shadow-2xl p-6 flex flex-col justify-between transform transition-transform duration-300 ease-in-out md:hidden"
+      :class="isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'"
+    >
+      <div>
+        <!-- 抽屜頂部：Logo 與 關閉按鈕 -->
+        <div class="flex items-center justify-between pb-5 border-b border-cream-200/80 mb-6">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-dustyRed-50 border border-dustyRed-100 flex items-center justify-center text-dustyRed-500 shadow-sm">
+              <i data-lucide="apple" class="w-4 h-4 stroke-[1.8]"></i>
+            </div>
+            <div>
+              <span class="font-semibold text-base text-ink-900">Chloe</span>
+              <p class="text-[10px] text-ink-400">解方架構&流程重組</p>
+            </div>
+          </div>
+          <button 
+            @click="closeMobileMenu"
+            aria-label="關閉選單"
+            class="p-2 rounded-xl text-ink-400 hover:text-ink-900 hover:bg-cream-100 transition-colors"
+          >
+            <svg class="w-5 h-5 stroke-[2]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" x2="6" y1="6" y2="18"></line>
+              <line x1="6" x2="18" y1="6" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- 選單項目清單 (點擊自動平滑滾動並關閉抽屜) -->
+        <nav class="space-y-1.5">
+          <a 
+            v-for="item in navLinks" 
+            :key="item.href"
+            :href="item.href" 
+            @click="closeMobileMenu"
+            class="flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium text-ink-700 hover:text-dustyRed-600 hover:bg-white border border-transparent hover:border-cream-200/80 transition-all shadow-none hover:shadow-sm group"
+          >
+            <span>{{ item.label }}</span>
+            <svg class="w-4 h-4 text-ink-300 group-hover:text-dustyRed-500 group-hover:translate-x-0.5 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </nav>
+      </div>
+
+      <!-- 抽屜底部：溫暖小語與快捷聯絡 -->
+      <div class="pt-6 border-t border-cream-200/80 text-center">
+        <a 
+          href="#connect" 
+          @click="closeMobileMenu"
+          class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-ink-900 hover:bg-dustyRed-600 text-white text-xs font-medium transition-all shadow-sm"
+        >
+          <span>和我聊聊</span>
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" x2="6" y1="1" y2="4"></line>
+            <line x1="10" x2="10" y1="1" y2="4"></line>
+            <line x1="14" x2="14" y1="1" y2="4"></line>
+          </svg>
+        </a>
+        <p class="text-[11px] text-ink-400 mt-3 font-normal">
+          散發乙烯氣體的蘋果 🍎
+        </p>
+      </div>
+    </div>
 
     <!-- 主區塊 HERO SECTION -->
     <main class="flex-grow">
@@ -646,6 +735,26 @@
       setup() {
         const selectedCategory = ref('all');
         const activeModal = ref(null);
+        const isMobileMenuOpen = ref(false);
+
+        const navLinks = [
+          { label: '自我期許', href: '#philosophy' },
+          { label: '背景與實務足跡', href: '#journey' },
+          { label: '解方代表作', href: '#projects' },
+          { label: '拆解思維', href: '#thinking' },
+          { label: '交流與共創', href: '#connect' }
+        ];
+
+        const toggleMobileMenu = () => {
+          isMobileMenuOpen.value = !isMobileMenuOpen.value;
+          nextTick(() => {
+            if (window.lucide) lucide.createIcons();
+          });
+        };
+
+        const closeMobileMenu = () => {
+          isMobileMenuOpen.value = false;
+        };
 
         const categories = [
           { id: 'all', name: '全部作品' },
@@ -784,7 +893,11 @@
           filteredProjects,
           activeModal,
           openModal,
-          closeModal
+          closeModal,
+          isMobileMenuOpen,
+          toggleMobileMenu,
+          closeMobileMenu,
+          navLinks
         };
       }
     }).mount('#app');
